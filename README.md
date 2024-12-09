@@ -1,8 +1,9 @@
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+# Goals
+- make a note taking site
+- should be minimalistic
+- should support markdown formating
+- should be able to open file from pc (local)
+- should be able to save file to pc
+- can set custom colors
+> currently using [color palette](https://colorhunt.co/palette/181c143c3d37697565ecdfcc)
+- should work something like [this](https://stackedit.io/app)
