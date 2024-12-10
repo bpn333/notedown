@@ -6,6 +6,20 @@ body {
     padding: 0px;
 }
 
+#root {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
 ::-webkit-scrollbar {
     width: 0;
+}
+
+img {
+    transition: all 0.3s;
+}
+
+img:hover {
+    transform: translateY(-8px);
 }

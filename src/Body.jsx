@@ -1,14 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { marked } from 'marked';
 
-function Body() {
-    const colors = {
-        background: "#697565",
-        foreground: "#ECDFCC"
-    };
-
-    const [lines, setLines] = useState(['']);
-    const [editingIndex, setEditingIndex] = useState(0);
+function Body({ lines, setLines, colors }) {
+    const [editingIndex, setEditingIndex] = useState(null);
     const inputRefs = useRef([]);
 
     const handleLineClick = (index) => {
@@ -39,15 +33,15 @@ function Body() {
     const containerCSS = {
         margin: "10px",
         padding: "10px",
-        backgroundColor: colors.background,
-        minHeight: "90vh",
+        backgroundColor: colors[2],
+        flexGrow: '1',
         overflowY: "auto",
         overflowWrap: "break-word",
         fontFamily: "Roboto Mono, monospace"
     };
 
     const lineCSS = {
-        color: colors.foreground,
+        color: colors[3],
         margin: "0px",
         cursor: "text"
     };
@@ -56,7 +50,7 @@ function Body() {
         width: "100%",
         border: "none",
         backgroundColor: "transparent",
-        color: colors.foreground,
+        color: colors[3],
         outline: "none",
         fontSize: "20px"
     };
