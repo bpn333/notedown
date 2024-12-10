@@ -42,14 +42,14 @@ function App() {
   const handleSave = (event) => {
     if (event.ctrlKey && event.key === 's') {
       event.preventDefault();
-      const fileName = prompt("Enter file name", "data.md");
+      const fileName = prompt("Enter file name", "note");
       if (fileName) {
 
         const fileBlob = new Blob([lines.join("\n")], { type: 'text/plain' });
         const fileURL = URL.createObjectURL(fileBlob);
         const a = document.createElement("a");
         a.href = fileURL;
-        a.download = fileName;
+        a.download = fileName + ".md";
         a.click();
         URL.revokeObjectURL(fileURL);  // Clean up
       }
