@@ -84,7 +84,12 @@ function Body({ lines, setLines, colors }) {
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter') {
                                     const newLines = [...lines];
-                                    newLines.splice(editingIndex + 1, 0, '');
+                                    const currentLine = newLines[editingIndex];
+                                    const cursorPosition = e.target.selectionStart;
+                                    const beforeCursor = currentLine.slice(0, cursorPosition);
+                                    const afterCursor = currentLine.slice(cursorPosition);
+                                    newLines[editingIndex] = beforeCursor;
+                                    newLines.splice(editingIndex + 1, 0, afterCursor);
                                     setLines(newLines);
                                     setEditingIndex(editingIndex + 1);
                                     e.preventDefault();
