@@ -55,11 +55,14 @@ function App() {
       }
     }
   };
+  const wordCount = lines.reduce((count, line) => count + line.split(/\s+/).filter(Boolean).length, 0);
+  const characterCount = lines.reduce((count, line) => count + line.length, 0);
+  console.log(wordCount, characterCount)
   return (
     <>
       <Head setLines={setLines} colors={colors} />
       <Body lines={lines} setLines={setLines} colors={colors} />
-      <Tail colors={colors} setColors={setColors} />
+      <Tail colors={colors} setColors={setColors} words={wordCount} chars={characterCount} />
     </>
   );
 }

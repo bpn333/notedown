@@ -1,4 +1,5 @@
-function Tail({ colors, setColors }) {
+function Tail({ colors, setColors, words, chars }) {
+    console.log(words, chars);
     const tailCSS = {
         display: "flex",
         justifyContent: "space-around",
@@ -27,9 +28,23 @@ function Tail({ colors, setColors }) {
         url.searchParams.set("colors", newColors.join(","));
         window.history.pushState({}, "", url);
     };
+    const counterContainerCss = {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        justifyContent: "space-around",
+        fontFamily: "Roboto Mono, monospace",
+        fontSize: "15px",
+        fontWeight: "1000",
+        margin: "5px 0",
+    }
 
     return (
         <div style={tailCSS}>
+            <div style={counterContainerCss}>
+                <span>words: <span style={{ color: colors[2] }}>{words}</span></span>
+                <span>chars: <span style={{ color: colors[2] }}>{chars}</span></span>
+            </div>
             <img src="/githubIcon.svg"
                 style={{
                     width: "40px",

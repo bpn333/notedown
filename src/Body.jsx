@@ -116,6 +116,25 @@ function Body({ lines, setLines, colors }) {
                                         e.preventDefault();
                                     }
                                 }
+                                else if (e.key === 'Delete') {
+                                    const newLines = [...lines];
+                                    if (!lines[editingIndex] && editingIndex > 0) {
+                                        newLines.splice(editingIndex, 1);
+                                        if (editingIndex === lines.length - 1 && editingIndex > 0) {
+                                            setEditingIndex(editingIndex - 1);
+                                        } else {
+                                            setEditingIndex(editingIndex);
+                                        }
+                                        setLines(newLines);
+                                        e.preventDefault();
+                                    }
+                                    else if (e.target.selectionStart === lines[editingIndex].length && editingIndex < lines.length - 1) {
+                                        newLines[editingIndex] += newLines[editingIndex + 1];
+                                        newLines.splice(editingIndex + 1, 1);
+                                        setLines(newLines);
+                                        e.preventDefault();
+                                    }
+                                }
                             }}
                             style={inputCSS}
                         />
