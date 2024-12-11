@@ -4,6 +4,7 @@ import { marked } from 'marked';
 function Body({ lines, setLines, colors }) {
     const [editingIndex, setEditingIndex] = useState(null);
     const inputRefs = useRef([]);
+    const pos = useRef(null);
 
     const handleLineClick = (index) => {
         setEditingIndex(index);
@@ -43,7 +44,7 @@ function Body({ lines, setLines, colors }) {
     const lineCSS = {
         color: colors[3],
         margin: "0px",
-        cursor: "text"
+        cursor: "default"
     };
 
     const inputCSS = {
@@ -52,14 +53,21 @@ function Body({ lines, setLines, colors }) {
         backgroundColor: "transparent",
         color: colors[3],
         outline: "none",
-        fontSize: "20px"
+        fontSize: "20px",
+        borderBottom: "3px solid #181C14"
     };
 
     useEffect(() => {
         if (inputRefs.current[editingIndex]) {
             const input = inputRefs.current[editingIndex];
             input.focus();
-            input.setSelectionRange(input.value.length, input.value.length);
+            if (pos.current != null) {
+                input.setSelectionRange(pos.current, pos.current);
+                pos.current = null;
+            }
+            else {
+                input.setSelectionRange(input.value.length, input.value.length);
+            }
         }
     }, [editingIndex]);
 
@@ -106,12 +114,20 @@ function Body({ lines, setLines, colors }) {
                                 }
                                 else if (e.key === 'ArrowDown') {
                                     if (editingIndex < lines.length - 1) {
+                                        const cursorPosition = e.target.selectionStart;
+                                        if (!(cursorPosition > lines[editingIndex + 1].length)) {
+                                            pos.current = cursorPosition;
+                                        }
                                         setEditingIndex(editingIndex + 1);
                                         e.preventDefault();
                                     }
                                 }
                                 else if (e.key === 'ArrowUp') {
                                     if (editingIndex > 0) {
+                                        const cursorPosition = e.target.selectionStart;
+                                        if (!(cursorPosition > lines[editingIndex - 1].length)) {
+                                            pos.current = cursorPosition;
+                                        }
                                         setEditingIndex(editingIndex - 1);
                                         e.preventDefault();
                                     }

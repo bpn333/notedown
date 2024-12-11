@@ -12,6 +12,12 @@ const getColorsFromURL = () => {
 
 function App() {
   const [lines, setLines] = useState(['']);
+  const [uiVisible,] = useState(() => {
+    const params = new URLSearchParams(location.search);
+    const ui = params.get("ui");
+    if (ui && (ui.toLowerCase() == "f" || ui.toLowerCase() == "false")) return false;
+    return true;
+  });
   const [colors, setColors] = useState(getColorsFromURL());
   const isListenerAdded = useRef(false);
 
@@ -59,9 +65,9 @@ function App() {
   const characterCount = lines.reduce((count, line) => count + line.length, 0);
   return (
     <>
-      <Head setLines={setLines} colors={colors} />
+      {uiVisible && <Head setLines={setLines} colors={colors} />}
       <Body lines={lines} setLines={setLines} colors={colors} />
-      <Tail colors={colors} setColors={setColors} words={wordCount} chars={characterCount} />
+      {uiVisible && <Tail colors={colors} setColors={setColors} words={wordCount} chars={characterCount} />}
     </>
   );
 }
