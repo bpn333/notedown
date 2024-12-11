@@ -1,11 +1,10 @@
 function Tail({ colors, setColors, words, chars }) {
-    console.log(words, chars);
     const tailCSS = {
         display: "flex",
         justifyContent: "space-around",
         alignItems: "center",
         backgroundColor: colors[0],
-        margin: "5px",
+        margin: "3px",
         padding: "5px",
         color: colors[1],
     };
@@ -16,7 +15,6 @@ function Tail({ colors, setColors, words, chars }) {
         border: "none",
         cursor: "pointer",
         outline: "2px solid #181C14",
-        padding: "3px",
         backgroundColor: "transparent"
     };
 
@@ -36,7 +34,7 @@ function Tail({ colors, setColors, words, chars }) {
         fontFamily: "Roboto Mono, monospace",
         fontSize: "15px",
         fontWeight: "1000",
-        margin: "5px 0",
+        margin: "1px 0",
     }
 
     return (

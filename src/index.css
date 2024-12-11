@@ -18,8 +18,11 @@ body {
 
 img {
     transition: all 0.3s;
+    max-width: 100%;
+    height: auto;
+    display: block;
 }
 
-img:hover {
+img:hover:not(#container img) {
     transform: translateY(-8px);
 }

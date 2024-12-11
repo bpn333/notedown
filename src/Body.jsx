@@ -31,7 +31,7 @@ function Body({ lines, setLines, colors }) {
     };
 
     const containerCSS = {
-        margin: "10px",
+        margin: "3px 10px",
         padding: "10px",
         backgroundColor: colors[2],
         flexGrow: '1',

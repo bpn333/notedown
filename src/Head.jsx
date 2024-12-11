@@ -7,7 +7,8 @@ function Head({ setLines, colors }) {
         backgroundColor: colors[0],
         color: colors[1],
         userSelect: "none",
-        margin: "5px"
+        margin: "3px",
+        alignItems: "center"
     };
     const btnCSS = {
         backgroundColor: "transparent",
@@ -49,7 +50,7 @@ function Head({ setLines, colors }) {
             >
                 <img src="/trashIcon.svg" style={iconCSS} />
             </button>
-            <h3 onClick={() => window.location.href = "https://github.com/bpn333/notedown"}>NoteDown</h3>
+            <span style={{ fontSize: "30px", fontFamily: "Roboto Mono, monospace", fontWeight: "1000" }} onClick={() => window.location.href = "https://github.com/bpn333/notedown"}>NoteDown</span>
             <button style={btnCSS} onClick={handleFileClick}>
                 <img src="/fileIcon.svg" style={iconCSS} />
             </button>
