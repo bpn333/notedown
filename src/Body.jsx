@@ -44,7 +44,7 @@ function Body({ lines, setLines, colors }) {
     const lineCSS = {
         color: colors[3],
         margin: "0px",
-        cursor: "default"
+        cursor: "text"
     };
 
     const inputCSS = {
