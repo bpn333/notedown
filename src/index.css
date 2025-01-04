@@ -24,11 +24,14 @@ body {
     width: 0;
 }
 
-svg {
-    transition: all 0.3s;
+img {
     max-width: 100%;
     height: auto;
     display: block;
+}
+
+svg {
+    transition: all 0.3s;
 }
 
 svg:hover {
