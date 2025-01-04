@@ -7,7 +7,7 @@ import "./index.css";
 const getColorsFromURL = () => {
   const params = new URLSearchParams(location.search);
   const colorsParam = params.get("colors");
-  return colorsParam ? colorsParam.split(",") : ['#3C3D37', '#ECDFCC', '#697565', '#ECDFCC'];
+  return colorsParam ? colorsParam.split(",") : ['#3C3D37', '#ECDFCC', '#697565', '#181C14'];
 };
 
 function App() {
@@ -36,16 +36,20 @@ function App() {
     url.searchParams.set("lines", encodedLines);
     window.history.replaceState(null, "", url);
     if (lines.length > 0 && !isListenerAdded.current) {
-      window.addEventListener('keydown', handleSave);
+      window.addEventListener('keydown', handleKeys);
       isListenerAdded.current = true;
     }
     return () => {
-      window.removeEventListener('keydown', handleSave);
+      window.removeEventListener('keydown', handleKeys);
       isListenerAdded.current = false;
     }
   }, [lines]);
 
-  const handleSave = (event) => {
+  useEffect(() => {
+    document.body.style.backgroundColor = colors[3];
+  }, [colors])
+
+  const handleKeys = (event) => {
     if (event.ctrlKey && event.key === 's') {
       event.preventDefault();
       const fileName = prompt("Enter file name", "note");

@@ -1,4 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+@font-face {
+    font-family: "Roboto Mono";
+    src: url("/fonts/RobotoMono-VariableFont_wght.ttf");
+}
+
+@font-face {
+    font-family: "ultraKill";
+    src: url("/fonts/04b_03.woff2");
+}
 
 body {
     background-color: #181C14;
@@ -16,13 +24,13 @@ body {
     width: 0;
 }
 
-img {
+svg {
     transition: all 0.3s;
     max-width: 100%;
     height: auto;
     display: block;
 }
 
-img:hover:not(#container img) {
+svg:hover {
     transform: translateY(-8px);
 }

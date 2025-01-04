@@ -21,6 +21,7 @@ function Head({ setLines, colors }) {
         width: "33px",
         height: "33px",
         padding: "3px",
+        fill: colors[3]
     };
 
     const fileInputRef = useRef(null);
@@ -48,11 +49,15 @@ function Head({ setLines, colors }) {
                 style={btnCSS}
                 onClick={() => setLines([''])}
             >
-                <img src="/trashIcon.svg" style={iconCSS} />
+                <svg style={iconCSS} >
+                    <use href="/icons/trashIcon.svg#trashIcon" />
+                </svg>
             </button>
-            <span style={{ fontSize: "30px", fontFamily: "Roboto Mono, monospace", fontWeight: "1000" }} onClick={() => window.location.href = "https://github.com/bpn333/notedown"}>NoteDown</span>
+            <span style={{ fontSize: "30px", fontFamily: "ultraKill", fontWeight: "1000" }} onClick={() => window.location.href = "https://github.com/bpn333/notedown"}>NoteDown</span>
             <button style={btnCSS} onClick={handleFileClick}>
-                <img src="/fileIcon.svg" style={iconCSS} />
+                <svg style={iconCSS} >
+                    <use href="/icons/fileIcon.svg#fileIcon" />
+                </svg>
             </button>
             <input
                 type="file"

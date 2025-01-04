@@ -6,7 +6,7 @@ function Tail({ colors, setColors, words, chars }) {
         backgroundColor: colors[0],
         margin: "3px",
         padding: "5px",
-        color: colors[1],
+        color: colors[3],
     };
 
     const colorInputCSS = {
@@ -14,7 +14,7 @@ function Tail({ colors, setColors, words, chars }) {
         height: "40px",
         border: "none",
         cursor: "pointer",
-        outline: "2px solid #181C14",
+        outline: "2px solid " + colors[3],
         backgroundColor: "transparent"
     };
 
@@ -40,17 +40,20 @@ function Tail({ colors, setColors, words, chars }) {
     return (
         <div style={tailCSS}>
             <div style={counterContainerCss}>
-                <span>words: <span style={{ color: colors[2] }}>{words}</span></span>
-                <span>chars: <span style={{ color: colors[2] }}>{chars}</span></span>
+                <span>words: <span style={{ color: colors[1], fontFamily: "ultraKill" }}>{words}</span></span>
+                <span>chars: <span style={{ color: colors[1], fontFamily: "ultraKill" }}>{chars}</span></span>
             </div>
-            <img src="/githubIcon.svg"
+            <svg
                 style={{
                     width: "40px",
                     height: "40px",
-                    cursor: "pointer"
+                    cursor: "pointer",
+                    fill: colors[3]
                 }}
                 onClick={(e) => window.location.href = "https://github.com/bpn333/notedown"}
-            />
+            >
+                <use href="/icons/githubIcon.svg#githubIcon" />
+            </svg>
             {colors.map((color, index) => (
                 <input
                     key={index}
