@@ -50,7 +50,7 @@ function Tail({ colors, setColors, words, chars }) {
                     cursor: "pointer",
                     fill: colors[3]
                 }}
-                onClick={(e) => window.location.href = "https://github.com/bpn333/notedown"}
+                onClick={(e) => window.location.href = "https://github.com/bpn333"}
             >
                 <use href="/icons/githubIcon.svg#githubIcon" />
             </svg>
