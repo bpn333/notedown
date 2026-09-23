@@ -167,6 +167,7 @@ function Body({ lines, setLines, colors }) {
 
     useEffect(() => {
         const imageUrls = [];
+        let active = true;
         const resolveImages = async () => {
             const images = containerRef.current?.querySelectorAll('img[src^="/api/"], img[src^="notedown-image:"]') || [];
             await Promise.all([...images].map(async (image) => {
@@ -176,7 +177,7 @@ function Body({ lines, setLines, colors }) {
                     : source.split("notedown-image:")[1];
                 try {
                     const storedImage = await getImage(id);
-                    if (storedImage) {
+                    if (active && storedImage) {
                         const imageUrl = URL.createObjectURL(storedImage.blob);
                         imageUrls.push(imageUrl);
                         image.src = imageUrl;
@@ -187,8 +188,11 @@ function Body({ lines, setLines, colors }) {
             }));
         };
         resolveImages();
-        return () => imageUrls.forEach((imageUrl) => URL.revokeObjectURL(imageUrl));
-    }, [lines]);
+        return () => {
+            active = false;
+            imageUrls.forEach((imageUrl) => URL.revokeObjectURL(imageUrl));
+        };
+    }, [lines, editingIndex]);
 
     return (
         <div
