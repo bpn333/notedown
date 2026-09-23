@@ -9,6 +9,7 @@ https://github.com/user-attachments/assets/92ac3c97-ca9b-44a8-ae22-5c9c78a2e620
 
 ## Shortcuts
 
+- `H` shows all keyboard shortcuts.
 - `Ctrl+S` downloads the current note as Markdown and `Ctrl+O` to open local file as Markdown.
 - `F` toggles the interface and updates `ui=f` in the URL.
 - `I` opens the Minecraft-style image inventory.

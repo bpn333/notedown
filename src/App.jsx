@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Head from "./Head";
 import Body from "./Body";
 import Tail from "./Tail";
 import Inventory from "./Inventory";
+import Shortcuts from "./Shortcuts";
 import "./index.css";
 
 const getColorsFromURL = () => {
@@ -21,6 +22,8 @@ function App() {
   });
   const [colors, setColors] = useState(getColorsFromURL());
   const [inventoryVisible, setInventoryVisible] = useState(false);
+  const [shortcutsVisible, setShortcutsVisible] = useState(false);
+  const fileInputRef = useRef(null);
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const encodedLines = params.get("lines");
@@ -41,9 +44,23 @@ function App() {
     document.body.style.backgroundColor = colors[3];
   }, [colors])
 
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (loadEvent) => {
+      const content = loadEvent.target.result;
+      setLines(content.split("\n"));
+    };
+    reader.readAsText(file);
+    event.target.value = "";
+  };
+
   const handleKeys = useCallback((event) => {
-    if (event.key === "Escape" && inventoryVisible) {
+    if (event.key === "Escape" && (inventoryVisible || shortcutsVisible)) {
       setInventoryVisible(false);
+      setShortcutsVisible(false);
       return;
     }
     if (event.ctrlKey && event.key === 's') {
@@ -60,6 +77,10 @@ function App() {
         URL.revokeObjectURL(fileURL);  // Clean up
       }
     }
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "o") {
+      event.preventDefault();
+      fileInputRef.current?.click();
+    }
     if (!event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey && !["INPUT", "TEXTAREA"].includes(event.target.tagName)) {
       if (event.key.toLowerCase() === "f") {
         const nextVisible = !uiVisible;
@@ -72,8 +93,11 @@ function App() {
       if (event.key.toLowerCase() === "i") {
         setInventoryVisible((visible) => !visible);
       }
+      if (event.key.toLowerCase() === "h") {
+        setShortcutsVisible((visible) => !visible);
+      }
     }
-  }, [inventoryVisible, lines, uiVisible]);
+  }, [inventoryVisible, lines, shortcutsVisible, uiVisible]);
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeys);
@@ -84,10 +108,18 @@ function App() {
   const characterCount = lines.reduce((count, line) => count + line.length, 0);
   return (
     <>
-      {uiVisible && <Head setLines={setLines} colors={colors} />}
+      {uiVisible && <Head clean={()=>setLines([""])} colors={colors} onOpenFile={() => fileInputRef.current?.click()} />}
       <Body lines={lines} setLines={setLines} colors={colors} />
       {uiVisible && <Tail colors={colors} setColors={setColors} words={wordCount} chars={characterCount} />}
       {inventoryVisible && <Inventory colors={colors} onClose={() => setInventoryVisible(false)} />}
+      {shortcutsVisible && <Shortcuts colors={colors} onClose={() => setShortcutsVisible(false)} />}
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+        accept=".txt,.md"
+      />
     </>
   );
 }
