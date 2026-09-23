@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Head from "./Head";
 import Body from "./Body";
 import Tail from "./Tail";
+import Inventory from "./Inventory";
 import "./index.css";
 
 const getColorsFromURL = () => {
@@ -12,15 +13,14 @@ const getColorsFromURL = () => {
 
 function App() {
   const [lines, setLines] = useState(['']);
-  const [uiVisible,] = useState(() => {
+  const [uiVisible, setUiVisible] = useState(() => {
     const params = new URLSearchParams(location.search);
     const ui = params.get("ui");
     if (ui && (ui.toLowerCase() == "f" || ui.toLowerCase() == "false")) return false;
     return true;
   });
   const [colors, setColors] = useState(getColorsFromURL());
-  const isListenerAdded = useRef(false);
-
+  const [inventoryVisible, setInventoryVisible] = useState(false);
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const encodedLines = params.get("lines");
@@ -35,21 +35,17 @@ function App() {
     const encodedLines = encodeURIComponent(lines.join("|"));
     url.searchParams.set("lines", encodedLines);
     window.history.replaceState(null, "", url);
-    if (lines.length > 0 && !isListenerAdded.current) {
-      window.addEventListener('keydown', handleKeys);
-      isListenerAdded.current = true;
-    }
-    return () => {
-      window.removeEventListener('keydown', handleKeys);
-      isListenerAdded.current = false;
-    }
   }, [lines]);
 
   useEffect(() => {
     document.body.style.backgroundColor = colors[3];
   }, [colors])
 
-  const handleKeys = (event) => {
+  const handleKeys = useCallback((event) => {
+    if (event.key === "Escape" && inventoryVisible) {
+      setInventoryVisible(false);
+      return;
+    }
     if (event.ctrlKey && event.key === 's') {
       event.preventDefault();
       const fileName = prompt("Enter file name", "note");
@@ -64,7 +60,26 @@ function App() {
         URL.revokeObjectURL(fileURL);  // Clean up
       }
     }
-  };
+    if (!event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey && !["INPUT", "TEXTAREA"].includes(event.target.tagName)) {
+      if (event.key.toLowerCase() === "f") {
+        const nextVisible = !uiVisible;
+        const url = new URL(window.location);
+        if (nextVisible) url.searchParams.delete("ui");
+        else url.searchParams.set("ui", "f");
+        window.history.pushState({}, "", url);
+        setUiVisible(nextVisible);
+      }
+      if (event.key.toLowerCase() === "i") {
+        setInventoryVisible((visible) => !visible);
+      }
+    }
+  }, [inventoryVisible, lines, uiVisible]);
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeys);
+    return () => window.removeEventListener("keydown", handleKeys);
+  }, [handleKeys]);
+
   const wordCount = lines.reduce((count, line) => count + line.split(/\s+/).filter(Boolean).length, 0);
   const characterCount = lines.reduce((count, line) => count + line.length, 0);
   return (
@@ -72,6 +87,7 @@ function App() {
       {uiVisible && <Head setLines={setLines} colors={colors} />}
       <Body lines={lines} setLines={setLines} colors={colors} />
       {uiVisible && <Tail colors={colors} setColors={setColors} words={wordCount} chars={characterCount} />}
+      {inventoryVisible && <Inventory colors={colors} onClose={() => setInventoryVisible(false)} />}
     </>
   );
 }
