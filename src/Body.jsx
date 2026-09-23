@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { marked } from 'marked';
+import { getImage, saveImage } from "./imageStore";
 
 function Body({ lines, setLines, colors }) {
     const [editingIndex, setEditingIndex] = useState(null);
     const inputRefs = useRef([]);
     const pos = useRef(null);
+    const containerRef = useRef(null);
 
     const handleLineClick = (index) => {
         setEditingIndex(index);
@@ -80,7 +82,7 @@ function Body({ lines, setLines, colors }) {
         }
     }
 
-    const handlePaste = (event) => {
+    const handlePaste = async (event) => {
         const pastedText = event.clipboardData.getData('text/plain');
         if (pastedText.includes('\n')) {
             const newLines = [...lines];
@@ -107,11 +109,16 @@ function Body({ lines, setLines, colors }) {
             for (let item of items) {
                 if (item.type.startsWith('image/')) {
                     const blob = item.getAsFile();
-                    const imageUrl = URL.createObjectURL(blob);
-                    const newLines = [...lines];
-                    newLines[editingIndex] += ` ![](${imageUrl})`;
-                    setLines(newLines);
                     event.preventDefault();
+                    try {
+                        const imageId = await saveImage(blob);
+                        const newLines = [...lines];
+                        newLines[editingIndex] += ` ![](/api/${imageId})`;
+                        setLines(newLines);
+                    } catch (error) {
+                        console.error("Unable to save pasted image.", error);
+                        window.alert("Unable to save that image.");
+                    }
                     break;
                 }
             }
@@ -119,7 +126,7 @@ function Body({ lines, setLines, colors }) {
     };
 
     const containerCSS = {
-        margin: "3px 10px",
+        margin: "10px",
         padding: "10px",
         backgroundColor: colors[2],
         flexGrow: '1',
@@ -158,9 +165,39 @@ function Body({ lines, setLines, colors }) {
         }
     }, [editingIndex]);
 
+    useEffect(() => {
+        const imageUrls = [];
+        let active = true;
+        const resolveImages = async () => {
+            const images = containerRef.current?.querySelectorAll('img[src^="/api/"], img[src^="notedown-image:"]') || [];
+            await Promise.all([...images].map(async (image) => {
+                const source = image.getAttribute("src");
+                const id = source.startsWith("/api/")
+                    ? source.slice("/api/".length)
+                    : source.split("notedown-image:")[1];
+                try {
+                    const storedImage = await getImage(id);
+                    if (active && storedImage) {
+                        const imageUrl = URL.createObjectURL(storedImage.blob);
+                        imageUrls.push(imageUrl);
+                        image.src = imageUrl;
+                    }
+                } catch (error) {
+                    console.error(`Unable to load image ${id}.`, error);
+                }
+            }));
+        };
+        resolveImages();
+        return () => {
+            active = false;
+            imageUrls.forEach((imageUrl) => URL.revokeObjectURL(imageUrl));
+        };
+    }, [lines, editingIndex]);
+
     return (
         <div
             id="container"
+            ref={containerRef}
             style={containerCSS}
             onPaste={handlePaste}
         >
