@@ -152,11 +152,14 @@ svg:hover {
   width: 100%;
   height: 100%;
   fill: #fff;
-  transition: none;
 }
 
-.inventory-delete:hover svg {
-  transform: none;
+#container svg,
+.inventory-delete svg {
+  transition: none;
+  &:hover {
+    transform: none;
+  }
 }
 
 .inventory-empty,

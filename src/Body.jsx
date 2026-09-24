@@ -126,7 +126,7 @@ function Body({ lines, setLines, colors }) {
     };
 
     const containerCSS = {
-        margin: "10px",
+        margin: "5px",
         padding: "10px",
         backgroundColor: colors[2],
         flexGrow: '1',
@@ -169,18 +169,37 @@ function Body({ lines, setLines, colors }) {
         const imageUrls = [];
         let active = true;
         const resolveImages = async () => {
-            const images = containerRef.current?.querySelectorAll('img[src^="/api/"], img[src^="notedown-image:"]') || [];
+            const images = containerRef.current?.querySelectorAll('img[src^="/api/"]') || [];
             await Promise.all([...images].map(async (image) => {
                 const source = image.getAttribute("src");
-                const id = source.startsWith("/api/")
-                    ? source.slice("/api/".length)
-                    : source.split("notedown-image:")[1];
+                const id = source.slice("/api/".length);
                 try {
                     const storedImage = await getImage(id);
                     if (active && storedImage) {
                         const imageUrl = URL.createObjectURL(storedImage.blob);
                         imageUrls.push(imageUrl);
                         image.src = imageUrl;
+                    } else {
+                        image.src = `data:image/svg+xml,${encodeURIComponent(`
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                width="200"
+                                height="200"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="${colors[3]}"
+                                stroke-width="0.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="lucide lucide-image-off preview-icon">
+                                <line x1="2" x2="22" y1="2" y2="22"/>
+                                <path d="M10.41 10.41a2 2 0 1 1-2.83-2.83"/>
+                                <line x1="13.5" x2="6" y1="13.5" y2="21"/>
+                                <line x1="18" x2="21" y1="12" y2="15"/>
+                                <path d="M3.59 3.59A1.99 1.99 0 0 0 3 5v14a2 2 0 0 0 2 2h14c.55 0 1.052-.22 1.41-.59"/>
+                                <line x1="21" x2="21" y1="15" y2="5"/>
+                                <path d="M21 15V5a2 2 0 0 0-2-2H9"/>
+                            </svg>
+                        `)}`
                     }
                 } catch (error) {
                     console.error(`Unable to load image ${id}.`, error);

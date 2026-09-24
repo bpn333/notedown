@@ -1,4 +1,4 @@
-const CACHE_NAME = "notedown-shell-v1";
+const CACHE_NAME = "notedown-shell-v1.1";
 const APP_SHELL = ["/", "/index.html", "/icons/noteDownIcon.svg"];
 const DATABASE_NAME = "notedown";
 const STORE_NAME = "images";
@@ -12,7 +12,17 @@ self.addEventListener("install", (event) => {
 });
 
 self.addEventListener("activate", (event) => {
-    event.waitUntil(self.clients.claim());
+    event.waitUntil(
+        caches.keys()
+            .then((cacheNames) =>
+                Promise.all(
+                    cacheNames
+                        .filter((name) => name !== CACHE_NAME)
+                        .map((name) => caches.delete(name))
+                )
+            )
+            .then(() => self.clients.claim())
+    );
 });
 
 self.addEventListener("fetch", (event) => {
@@ -22,17 +32,34 @@ self.addEventListener("fetch", (event) => {
         event.respondWith(getImageResponse(requestURL.pathname.slice("/api/".length)));
         return;
     }
-    event.respondWith(
-        caches.match(event.request).then((cachedResponse) => (
-            cachedResponse || fetch(event.request).then((networkResponse) => {
-                if (new URL(event.request.url).origin === self.location.origin) {
+
+    // SPA navigations: ignore query string entirely, always serve the shell
+    if (event.request.mode === "navigate") {
+        event.respondWith(
+            caches.match("/index.html").then((cached) =>
+                cached || fetch(event.request).catch(() => caches.match("/index.html"))
+            )
+        );
+        return;
+    }
+
+    // Everything else (real static assets: JS, CSS, icons, etc.)
+    if (requestURL.origin === self.location.origin) {
+        event.respondWith(
+            caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) =>
+                cachedResponse ||
+                fetch(event.request).then((networkResponse) => {
                     const responseToCache = networkResponse.clone();
                     caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
-                }
-                return networkResponse;
-            })
-        ))
-    );
+                    return networkResponse;
+                })
+            )
+        );
+        return;
+    }
+
+    // Cross-origin GET, just pass through
+    event.respondWith(fetch(event.request));
 });
 
 const getImageResponse = (id) => new Promise((resolve) => {
