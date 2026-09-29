@@ -177,7 +177,7 @@ function Body({ lines, setLines, colors }) {
                     const storedImage = await getImage(id);
                     if (active && storedImage) {
                         const imageUrl = URL.createObjectURL(storedImage.blob);
-                        imageUrls.push(imageUrl);
+                        imageUrls.push({ image, imageUrl, source });
                         image.src = imageUrl;
                     } else {
                         image.src = `data:image/svg+xml,${encodeURIComponent(`
@@ -209,7 +209,10 @@ function Body({ lines, setLines, colors }) {
         resolveImages();
         return () => {
             active = false;
-            imageUrls.forEach((imageUrl) => URL.revokeObjectURL(imageUrl));
+            imageUrls.forEach(({ image, imageUrl, source }) => {
+                if (image.src === imageUrl) image.src = source;
+                URL.revokeObjectURL(imageUrl);
+            });
         };
     }, [lines, editingIndex]);
 
