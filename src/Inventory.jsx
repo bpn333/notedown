@@ -12,6 +12,7 @@ function Inventory({ colors, onClose }) {
         const loadImages = async () => {
             try {
                 const storedImages = await getImages();
+                storedImages.sort((a,b) => b.createdAt - a.createdAt);
                 if (active) {
                     imageUrls = storedImages.map((image) => URL.createObjectURL(image.blob));
                     setImages(storedImages.map((image, index) => ({
